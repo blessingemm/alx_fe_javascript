@@ -13,7 +13,7 @@ const containerForm = document.getElementById('formContainer')
 function showRandomQuote(){
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const quote = quotes[randomIndex]
-  displayQuotes.innerText = `"${quote.text}" - (${quote.category})`;
+  displayQuotes.innerHTML = `"<em>${quote.text}</em>" - (${quote.category})`;
 
 }
 
@@ -31,7 +31,7 @@ function showRandomQuoteByCategory(){
   }
   const randomIndex = Math.floor(Math.random() * filtered.length);
   const quote = filtered[randomIndex]
-  displayQuotes.innerText = `"${quote.text}" - (${quote.category})`;
+  displayQuotes.innerHTML = `"<em>${quote.text}</em>" - (${quote.category})`;
 }
 
 
