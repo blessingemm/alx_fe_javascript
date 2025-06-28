@@ -18,12 +18,7 @@ function loadQuotes() {
   if (storedQuotes) {
     quotes = JSON.parse(storedQuotes);
   } else {
-    quotes = [
-      { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
-      { text: "Life is what happens when you're busy making other plans.", category: "Life" },
-      { text: "Believe you can and you're halfway there.", category: "Inspiration" }
-    ];
-    saveQuotes();
+    saveQuotes(); 
   }
 
   populateCategories();
@@ -122,13 +117,15 @@ function addQuote() {
   const category = categoryInput.value.trim();
 
   if (text && category) {
-    quotes.push({ text, category });
+    const newQuote = { text, category };
+    quotes.push(newQuote);
     saveQuotes();
     populateCategories();
     filterQuotes();
     textInput.value = '';
     categoryInput.value = '';
     alert('Quote added. You can click Show New Quote to see it');
+    postQuoteToServer(newQuote); // simulate post
   } else {
     alert('Please, enter a quote and a category');
   }
@@ -167,6 +164,47 @@ function importFromJsonFile(event) {
   };
   fileReader.readAsText(event.target.files[0]);
 }
+
+async function fetchServerQuotes() {
+  return [
+    { text: "Server quote 1", category: "ServerCat" },
+    { text: "Server quote 2", category: "ServerCat" }
+  ];
+}
+
+async function postQuoteToServer(quote) {
+  console.log("Posting to server (simulated):", quote);
+}
+
+async function syncWithServer() {
+  try {
+    const serverQuotes = await fetchServerQuotes();
+    let updated = false;
+
+    serverQuotes.forEach(serverQuote => {
+      const exists = quotes.some(localQuote =>
+        localQuote.text === serverQuote.text && localQuote.category === serverQuote.category
+      );
+      if (!exists) {
+        quotes.push(serverQuote);
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      saveQuotes();
+      populateCategories();
+      filterQuotes();
+      alert("Quotes synced from server. Server data merged.");
+    }
+
+  } catch (err) {
+    console.error("Server sync failed", err);
+  }
+}
+
+setInterval(syncWithServer, 30000);
+
 
 loadQuotes();
 createAddQuoteForm();
