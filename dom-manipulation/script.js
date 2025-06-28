@@ -125,7 +125,7 @@ function addQuote() {
     textInput.value = '';
     categoryInput.value = '';
     alert('Quote added. You can click Show New Quote to see it');
-    postQuoteToServer(newQuote); // simulate post
+    postQuoteToServer(newQuote);
   } else {
     alert('Please, enter a quote and a category');
   }
@@ -165,7 +165,7 @@ function importFromJsonFile(event) {
   fileReader.readAsText(event.target.files[0]);
 }
 
-async function fetchServerQuotes() {
+async function fetchQuotesFromServer() {
   return [
     { text: "Server quote 1", category: "ServerCat" },
     { text: "Server quote 2", category: "ServerCat" }
@@ -173,12 +173,12 @@ async function fetchServerQuotes() {
 }
 
 async function postQuoteToServer(quote) {
-  console.log("Posting to server (simulated):", quote);
+  console.log("Simulated POST to server:", quote);
 }
 
 async function syncWithServer() {
   try {
-    const serverQuotes = await fetchServerQuotes();
+    const serverQuotes = await fetchQuotesFromServer();
     let updated = false;
 
     serverQuotes.forEach(serverQuote => {
@@ -199,12 +199,11 @@ async function syncWithServer() {
     }
 
   } catch (err) {
-    console.error("Server sync failed", err);
+    console.error("Sync failed", err);
   }
 }
 
 setInterval(syncWithServer, 30000);
-
 
 loadQuotes();
 createAddQuoteForm();
