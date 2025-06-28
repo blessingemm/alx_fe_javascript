@@ -18,7 +18,7 @@ function loadQuotes() {
   if (storedQuotes) {
     quotes = JSON.parse(storedQuotes);
   } else {
-    saveQuotes(); 
+    saveQuotes();
   }
 
   populateCategories();
@@ -122,9 +122,9 @@ function addQuote() {
     saveQuotes();
     populateCategories();
     filterQuotes();
+    alert('Quote added. You can click Show New Quote to see it');
     textInput.value = '';
     categoryInput.value = '';
-    alert('Quote added. You can click Show New Quote to see it');
     postQuoteToServer(newQuote);
   } else {
     alert('Please, enter a quote and a category');
@@ -166,40 +166,54 @@ function importFromJsonFile(event) {
 }
 
 async function fetchQuotesFromServer() {
-  return [
-    { text: "Server quote 1", category: "ServerCat" },
-    { text: "Server quote 2", category: "ServerCat" }
-  ];
+  try {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const data = await response.json();
+    // Simulate mapping posts to quotes
+    return data.slice(0, 5).map(post => ({
+      text: post.title,
+      category: 'ServerCategory'
+    }));
+  } catch (error) {
+    console.error('Error fetching server data:', error);
+    return [];
+  }
 }
 
 async function postQuoteToServer(quote) {
-  console.log("Simulated POST to server:", quote);
+  try {
+    await fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'POST',
+      body: JSON.stringify(quote),
+      headers: {
+        'Content-type': 'application/json; charset=UTF-8',
+      }
+    });
+    console.log('Posted quote to server:', quote);
+  } catch (error) {
+    console.error('Error posting to server:', error);
+  }
 }
 
 async function syncWithServer() {
-  try {
-    const serverQuotes = await fetchQuotesFromServer();
-    let updated = false;
+  const serverQuotes = await fetchQuotesFromServer();
+  let conflict = false;
 
-    serverQuotes.forEach(serverQuote => {
-      const exists = quotes.some(localQuote =>
-        localQuote.text === serverQuote.text && localQuote.category === serverQuote.category
-      );
-      if (!exists) {
-        quotes.push(serverQuote);
-        updated = true;
-      }
-    });
-
-    if (updated) {
-      saveQuotes();
-      populateCategories();
-      filterQuotes();
-      alert("Quotes synced from server. Server data merged.");
+  serverQuotes.forEach(serverQuote => {
+    const exists = quotes.some(localQuote =>
+      localQuote.text === serverQuote.text && localQuote.category === serverQuote.category
+    );
+    if (!exists) {
+      quotes.push(serverQuote);
+      conflict = true;
     }
+  });
 
-  } catch (err) {
-    console.error("Sync failed", err);
+  if (conflict) {
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+    alert('Quotes synced from server. Server data merged.');
   }
 }
 
