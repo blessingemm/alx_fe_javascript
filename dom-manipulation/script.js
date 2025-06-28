@@ -16,7 +16,7 @@ function loadQuotes(){
   if(storedQuotes){
     quotes = JSON.parse(storedQuotes);
   }else{
-    let quotes = [
+    quotes = [
     { text: "The best way to get started is to quit talking and begin doing.", category: "Motivation" },
     { text: "Life is what happens when you're busy making other plans.", category: "Life" },
     { text: "Believe you can and you're halfway there.", category: "Inspiration" }
@@ -82,6 +82,7 @@ function addQuote(){
   const category = categoryInput.value.trim();
   if(text && category){
     quotes.push({ text: text, category: category })
+    saveQuotes();
     textInput.value = '';
     categoryInput.value = '';
     alert('Jokes added. You can click show New Quote to see it')
