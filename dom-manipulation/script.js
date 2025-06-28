@@ -11,6 +11,8 @@ const filterBtn = document.getElementById('filterQuote');
 const containerForm = document.getElementById('formContainer');
 const exportBtn = document.getElementById('exportQuotes');
 
+let selectedCategory = 'all';
+
 function loadQuotes() {
   const storedQuotes = localStorage.getItem('quotes');
   if (storedQuotes) {
@@ -26,9 +28,10 @@ function loadQuotes() {
 
   populateCategories();
 
-  const lastCategory = localStorage.getItem('lastCategory');
+  const lastCategory = localStorage.getItem('selectedCategory');
   if (lastCategory) {
-    selectCategory.value = lastCategory;
+    selectedCategory = lastCategory;
+    selectCategory.value = selectedCategory;
     filterQuotes();
   }
 }
@@ -49,16 +52,16 @@ function populateCategories() {
 }
 
 function filterQuotes() {
-  const category = selectCategory.value;
-  localStorage.setItem('lastCategory', category);
+  selectedCategory = selectCategory.value;
+  localStorage.setItem('selectedCategory', selectedCategory);
 
   let filteredQuotes = quotes;
-  if (category !== 'all') {
-    filteredQuotes = quotes.filter(q => q.category === category);
+  if (selectedCategory !== 'all') {
+    filteredQuotes = quotes.filter(q => q.category === selectedCategory);
   }
 
   if (filteredQuotes.length === 0) {
-    displayQuotes.innerHTML = `No quotes found for category: ${category}`;
+    displayQuotes.innerHTML = `No quotes found for category: ${selectedCategory}`;
   } else {
     const list = filteredQuotes.map(q => `"<em>${q.text}</em>" - (${q.category})`).join('<br>');
     displayQuotes.innerHTML = list;
@@ -73,15 +76,16 @@ function showRandomQuote() {
 }
 
 function showRandomQuoteByCategory() {
-  const category = selectCategory.value.trim();
-  if (!category) {
+  const typedCategoryInput = document.getElementById('typedCategoryFilter');
+  selectedCategory = typedCategoryInput.value.trim();
+  if (!selectedCategory) {
     alert('Please, enter a category');
     return;
   }
 
-  const filtered = quotes.filter(quote => quote.category.toLowerCase() === category.toLowerCase());
+  const filtered = quotes.filter(quote => quote.category.toLowerCase() === selectedCategory.toLowerCase());
   if (filtered.length === 0) {
-    displayQuotes.innerText = `No quotes found for category: ${category}`;
+    displayQuotes.innerText = `No quotes found for category: ${selectedCategory}`;
     return;
   }
 
