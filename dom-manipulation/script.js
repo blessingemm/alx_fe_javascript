@@ -116,7 +116,6 @@ async function fetchQuotesFromServer() {
     const response = await fetch('https://jsonplaceholder.typicode.com/posts');
     const serverData = await response.json();
     if (Array.isArray(serverData)) {
-      // Simulate conflict resolution: server data wins
       quotes = serverData.map(post => ({
         text: post.title,
         category: "Server"
@@ -124,7 +123,7 @@ async function fetchQuotesFromServer() {
       saveQuotes();
       populateCategories();
       filterQuotes();
-      alert('Quotes synced from server. Server data took precedence.');
+      alert('Quotes synced with server!');
     }
   } catch (err) {
     console.error('Error fetching from server:', err);
@@ -147,11 +146,9 @@ async function postQuoteToServer(quote) {
 }
 
 function syncQuotes() {
-  // Wrapper function as required by checker
   fetchQuotesFromServer();
 }
 
-// Periodic sync every 30 seconds
 setInterval(syncQuotes, 30000);
 
 function exportToJsonFile() {
